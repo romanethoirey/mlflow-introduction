@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/romini/Documents/Efrei/S9/Application%20of%20Big%20Data/pythonProject/mlruns/0/2e05a210fcc245fa87d8e5e97a3df1a3/artifacts
+end_time: 1603919381200
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 2e05a210fcc245fa87d8e5e97a3df1a3
+run_uuid: 2e05a210fcc245fa87d8e5e97a3df1a3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1603919381046
+status: 3
+tags: []
+user_id: romini

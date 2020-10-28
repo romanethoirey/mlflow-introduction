@@ -10,9 +10,9 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
 
-def xgboost_func(app_train):
-    X = app_train.drop(columns=['TARGET'])
-    y = app_train["TARGET"]
+def xgboost_func(app_train, labels):
+    X = app_train
+    y = labels
 
     print("XGBoost : Splitting data")
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
