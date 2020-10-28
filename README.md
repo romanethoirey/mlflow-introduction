@@ -12,3 +12,6 @@ https://www.kaggle.com/c/home-credit-default-risk/data
 you'll not use all the datasets available on Kaggle, only the main data set : application_train.csv
 application_test.csv
 You can also use a part of this dataset (an example is given for this Lab)
+
+By MasterYodius : Alexandre OUDNI and
+romanethoirey : Romane THOIREY
