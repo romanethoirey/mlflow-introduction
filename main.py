@@ -9,6 +9,7 @@ from preprocessing import preprocessing
 from shap_model import shap_implementation
 from randomforest_model import randomforest_func
 from gradientboosting_model import gradientboosting_func
+from sklearn.utils import shuffle
 
 import logging
 
@@ -22,37 +23,47 @@ if __name__ == '__main__':
 
     print("Preprocessing Data")
 
+    tmp_0 = app_train[app_train['TARGET'] == 0]
+    tmp_1 = app_train[app_train['TARGET'] == 1]
+
+    tmp_0 = shuffle(tmp_0)
+    tmp_0 = tmp_0.head(tmp_1.shape[0])
+
+    frames = [tmp_0, tmp_1]
+    app_train_balanced = pd.concat(frames)
+
     labels = app_train["TARGET"]
-    app_train, app_test, app_train_balanced = preprocessing(app_train, app_test)
+    labels_balanced = app_train_balanced['TARGET']
+    app_train, app_test, app_train_balanced = preprocessing(app_train, app_test, app_train_balanced)
 
     try:
         if sys.argv[1] == "XGBoost":
             print("______________")
             print("Xgboost")
             model, pred, accur, rmse, f1_score = xgboost_func(app_train, labels)
-            #model_balanced, pred_balanced, accur_balanced, rmse_balanced, f1_score_balanced = xgboost_func(app_train_balanced, labels)
+            model_balanced, pred_balanced, accur_balanced, rmse_balanced, f1_score_balanced = xgboost_func(app_train_balanced, labels_balanced)
 
         elif sys.argv[1] == "Gradient Boosting":
             print("______________")
             print("Gradient Boosting")
             model, pred, accur, rmse, f1_score = gradientboosting_func(app_train, labels)
-            # model_balanced, pred_balanced, accur_balanced, rmse_balanced, f1_score_balanced = gradientboosting_func(app_train_balanced, labels)
+            model_balanced, pred_balanced, accur_balanced, rmse_balanced, f1_score_balanced = gradientboosting_func(app_train_balanced, labels_balanced)
 
         elif sys.argv[1] == "Random Forest":
             print("______________")
             print("Random Forest")
             model, pred, accur, rmse, f1_score = randomforest_func(app_train, labels)
-            # model_balanced, pred_balanced, accur_balanced, rmse_balanced, f1_score_balanced = randomforest_func(app_train_balanced, labels)
+            model_balanced, pred_balanced, accur_balanced, rmse_balanced, f1_score_balanced = randomforest_func(app_train_balanced, labels_balanced)
 
         print("______________")
         print(sys.argv[1])
         print("The accuracy of the model is {}".format(accur))
         print("The RMSE of the model is {}".format(rmse))
         print("The F1 Score of the model is {}".format(f1_score))
-
-        # print("The accuracy of the balanced model is {}".format(accur_balanced))
-        # print("The RMSE of the balanced model is {}".format(rmse_balanced))
-        # print("The F1 Score of the balanced model is {}".format(f1_score_balanced))
+        print("______________")
+        print("The accuracy of the balanced model is {}".format(accur_balanced))
+        print("The RMSE of the balanced model is {}".format(rmse_balanced))
+        print("The F1 Score of the balanced model is {}".format(f1_score_balanced))
 
     except IndexError:
         logger.exception(
@@ -66,11 +77,11 @@ if __name__ == '__main__':
         mlflow.log_metric("Accuracy", accur)
         mlflow.log_metric("f1_score", f1_score)
 
-        # mlflow.log_metric("balanced rmse", rmse_balanced)
-        # mlflow.log_metric("balanced Accuracy", accur_balanced)
-        # mlflow.log_metric("balanced f1_score", f1_score_balanced)
+        mlflow.log_metric("balanced rmse", rmse_balanced)
+        mlflow.log_metric("balanced Accuracy", accur_balanced)
+        mlflow.log_metric("balanced f1_score", f1_score_balanced)
 
         mlflow.sklearn.log_model(model, sys.argv[1])
-        # mlflow.sklearn.log_model(model_balanced, sys.argv[1]+" balanced")
+        mlflow.sklearn.log_model(model_balanced, sys.argv[1]+" balanced")
 
-    shap_implementation(model, app_train)
+    # shap_implementation(model, app_train)
